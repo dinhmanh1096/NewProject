@@ -71,3 +71,6 @@ D:\NewProject\NewProject\obj\Debug\net6.0\refint\NewProject.dll
 D:\NewProject\NewProject\obj\Debug\net6.0\NewProject.pdb
 D:\NewProject\NewProject\obj\Debug\net6.0\NewProject.genruntimeconfig.cache
 D:\NewProject\NewProject\obj\Debug\net6.0\ref\NewProject.dll
+D:\NewProject\NewProject\bin\Debug\net6.0\Microsoft.AspNet.Identity.Core.dll
+D:\NewProject\NewProject\bin\Debug\net6.0\AutoMapper.dll
+D:\NewProject\NewProject\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

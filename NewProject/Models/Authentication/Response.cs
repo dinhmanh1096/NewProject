@@ -1,4 +1,4 @@
-﻿namespace NewProject.Data
+﻿namespace NewProject.Models.Authentication
 {
     public class Response
     {

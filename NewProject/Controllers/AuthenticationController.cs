@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NewProject.Data;
+using NewProject.Models.Authentication;
 using NewProject.Models.Authentication.Login;
 using NewProject.Models.Authentication.SignUp;
 using System.Diagnostics.Eventing.Reader;
@@ -18,19 +20,16 @@ namespace NewProject.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
         public AuthenticationController(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration,
-            SignInManager<IdentityUser> signInManager)
+            RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
-            _signInManager = signInManager;
         }
 
-        [HttpPost]
+        [HttpPost]     
         public async Task<IActionResult> Register([FromBody] RegisterUser registerUser, string role)
         {
             var userExit = await _userManager.FindByEmailAsync(registerUser.Email);
