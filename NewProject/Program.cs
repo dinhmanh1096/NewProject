@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NewProject.Data;
 using NewProject.Reponsitories;
 using System.Text;
+using static NewProject.Data.ApplicationDbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,9 +49,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyDB"));
 });
-//
+
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+   .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+
+/*
+builder.Services.AddIdentityCore<IdentityUser<int>>(options
+    => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+*/
 //
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication(Options =>
@@ -71,9 +82,10 @@ builder.Services.AddAuthentication(Options =>
     };
 });
 
+//
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ISportRepository, SportRepository>();
-
+builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 
 var app = builder.Build();
 

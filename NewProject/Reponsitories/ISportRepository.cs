@@ -9,5 +9,6 @@ namespace NewProject.Reponsitories
         public Task<int> AddSportAsync(RequestSportModel model);
         public Task DeleteSportAsync(int sportId);
         public Task UpdateSportAsync(int sportId, SportModel model);
+        
     }
 }

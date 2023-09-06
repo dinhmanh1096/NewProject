@@ -12,8 +12,8 @@ using NewProject.Data;
 namespace NewProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230821074821_AddTable")]
-    partial class AddTable
+    [Migration("20230906071431_EditColumnWorkout")]
+    partial class EditColumnWorkout
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,14 +53,14 @@ namespace NewProject.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8c41926d-225f-468a-a3a9-9496cdcf55fc",
+                            Id = "ec89ee27-c5dd-4649-a0f3-394758d4e582",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "5e6867a4-80a0-4a7f-bbf0-d8d4e274db08",
+                            Id = "7f012ef5-bf4f-4f7c-a0e0-959d8cfabafb",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -102,10 +102,6 @@ namespace NewProject.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -159,8 +155,6 @@ namespace NewProject.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -277,10 +271,6 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Speed")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -292,24 +282,19 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WorkoutName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("WorkoutID");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("SportID");
 
                     b.ToTable("Workout", (string)null);
-                });
-
-            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -365,12 +350,6 @@ namespace NewProject.Migrations
 
             modelBuilder.Entity("NewProject.Data.Workout", b =>
                 {
-                    b.HasOne("NewProject.Data.ApplicationDbContext+ApplicationUser", null)
-                        .WithMany("Claims")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("NewProject.Data.Sport", "sport")
                         .WithMany("Workouts")
                         .HasForeignKey("SportID")
@@ -384,11 +363,6 @@ namespace NewProject.Migrations
             modelBuilder.Entity("NewProject.Data.Sport", b =>
                 {
                     b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
-                {
-                    b.Navigation("Claims");
                 });
 #pragma warning restore 612, 618
         }

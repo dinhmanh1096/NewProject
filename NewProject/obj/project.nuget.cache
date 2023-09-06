@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "xQ/QWwuFo88n0BNsSA0pBxaUDmqVnuEJ8RAu5raKIrxIhd9Z+hU2Ft0ZwfLCFqsqJyKauLiIuZKu45oGS+XmQQ==",
+  "dgSpecHash": "Vrw2wiqhbD34sMlF7ArbYQQ43GCIgbL6s+N8q1I8C+irdwAD2kE6JfgIavo+ik7UuXzJ2+cep7hGM0ZttJgi5g==",
   "success": true,
   "projectFilePath": "D:\\NewProject\\NewProject\\NewProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
+    "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
+    "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\microsoft.aspnet.identity.core\\2.2.4\\microsoft.aspnet.identity.core.2.2.4.nupkg.sha512",
     "C:\\Users\\intern.ndinhmanh\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.10\\microsoft.aspnetcore.authentication.jwtbearer.6.0.10.nupkg.sha512",

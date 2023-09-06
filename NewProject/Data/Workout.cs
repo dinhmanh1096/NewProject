@@ -8,7 +8,7 @@
         public string Speed { get; set; }
         public string Time { get; set; }
         public int SportID { get; set; }
-        public string Id { get; set; }
+        public string UserName { get; set; }
 
         public Sport sport { get; set; }
     }

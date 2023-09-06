@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NewProject.Migrations
 {
-    public partial class InitAuthen : Migration
+    public partial class dbinit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,20 @@ namespace NewProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sport",
+                columns: table => new
+                {
+                    SportID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SportName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SportDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sport", x => x.SportID);
                 });
 
             migrationBuilder.CreateTable(
@@ -154,6 +168,30 @@ namespace NewProject.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Workout",
+                columns: table => new
+                {
+                    WorkoutID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkoutName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Distance = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Speed = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Time = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SportID = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workout", x => x.WorkoutID);
+                    table.ForeignKey(
+                        name: "FK_Sport_Workout",
+                        column: x => x.SportID,
+                        principalTable: "Sport",
+                        principalColumn: "SportID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -192,6 +230,11 @@ namespace NewProject.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Workout_SportID",
+                table: "Workout",
+                column: "SportID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -212,10 +255,16 @@ namespace NewProject.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Workout");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Sport");
         }
     }
 }

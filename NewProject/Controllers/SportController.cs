@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NewProject.Models;
 using NewProject.Reponsitories;
 
 namespace NewProject.Controllers
 {
+    [ Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SportController : ControllerBase
@@ -16,6 +18,7 @@ namespace NewProject.Controllers
             _sportRepo = repo;
         }
         [HttpGet]
+      
         public async Task<IActionResult> GetAllSport()
         {
             try

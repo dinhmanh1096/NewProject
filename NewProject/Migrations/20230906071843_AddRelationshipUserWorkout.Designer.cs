@@ -12,8 +12,8 @@ using NewProject.Data;
 namespace NewProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230818035055_RoleSeeded")]
-    partial class RoleSeeded
+    [Migration("20230906071843_AddRelationshipUserWorkout")]
+    partial class AddRelationshipUserWorkout
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,14 +53,14 @@ namespace NewProject.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c1cd6f2d-dd80-42f6-bedf-f22cdc7e64f2",
+                            Id = "fbe4bee9-2505-428e-8e1d-ad2c63bf82e8",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "cf69cd50-7ae6-4f11-ab18-833868596a6b",
+                            Id = "3580f53d-12d3-49c7-8cbf-590710202e5f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -102,6 +102,10 @@ namespace NewProject.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -155,6 +159,8 @@ namespace NewProject.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -238,6 +244,74 @@ namespace NewProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("NewProject.Data.Sport", b =>
+                {
+                    b.Property<int>("SportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SportID"), 1L, 1);
+
+                    b.Property<string>("SportDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SportName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SportID");
+
+                    b.ToTable("Sport", (string)null);
+                });
+
+            modelBuilder.Entity("NewProject.Data.Workout", b =>
+                {
+                    b.Property<int>("WorkoutID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkoutID"), 1L, 1);
+
+                    b.Property<string>("Distance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Speed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SportID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("WorkoutName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WorkoutID");
+
+                    b.HasIndex("SportID");
+
+                    b.HasIndex("UserName");
+
+                    b.ToTable("Workout", (string)null);
+                });
+
+            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.HasDiscriminator().HasValue("ApplicationUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -287,6 +361,34 @@ namespace NewProject.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("NewProject.Data.Workout", b =>
+                {
+                    b.HasOne("NewProject.Data.Sport", "sport")
+                        .WithMany("Workouts")
+                        .HasForeignKey("SportID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Sport_Workout");
+
+                    b.HasOne("NewProject.Data.ApplicationDbContext+ApplicationUser", null)
+                        .WithMany("Workouts")
+                        .HasForeignKey("UserName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("sport");
+                });
+
+            modelBuilder.Entity("NewProject.Data.Sport", b =>
+                {
+                    b.Navigation("Workouts");
+                });
+
+            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
+                {
+                    b.Navigation("Workouts");
                 });
 #pragma warning restore 612, 618
         }

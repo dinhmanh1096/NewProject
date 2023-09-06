@@ -36,9 +36,14 @@ namespace NewProject.Controllers
             if (userExit != null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden,
-                    new Response { Status = "Error", Message = "user already exists!" });
+                    new Response { Status = "Error", Message = "Email already exists!" });
             }
-
+            var username = await _userManager.FindByNameAsync(registerUser.UserName);
+            if (username != null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    new Response { Status = "Error", Message = "User already exists!" });
+            }
             IdentityUser user = new()
             {
                 Email = registerUser.Email,

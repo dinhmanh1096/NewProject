@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewProject.Data;
 
@@ -11,9 +12,10 @@ using NewProject.Data;
 namespace NewProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230822092636_seedrole")]
+    partial class seedrole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,14 +53,14 @@ namespace NewProject.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fbe4bee9-2505-428e-8e1d-ad2c63bf82e8",
+                            Id = "7e4fa7ca-27cb-4978-af4c-e8602f0509f4",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "3580f53d-12d3-49c7-8cbf-590710202e5f",
+                            Id = "aaf0a9ea-600a-42b2-9aed-e6841c5d53a8",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -100,10 +102,6 @@ namespace NewProject.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -157,8 +155,6 @@ namespace NewProject.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -286,28 +282,18 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("WorkoutName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("id")
+                        .HasColumnType("int");
 
                     b.HasKey("WorkoutID");
 
                     b.HasIndex("SportID");
 
-                    b.HasIndex("UserName");
-
                     b.ToTable("Workout", (string)null);
-                });
-
-            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -370,21 +356,10 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Sport_Workout");
 
-                    b.HasOne("NewProject.Data.ApplicationDbContext+ApplicationUser", null)
-                        .WithMany("Workouts")
-                        .HasForeignKey("UserName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("sport");
                 });
 
             modelBuilder.Entity("NewProject.Data.Sport", b =>
-                {
-                    b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("NewProject.Data.ApplicationDbContext+ApplicationUser", b =>
                 {
                     b.Navigation("Workouts");
                 });

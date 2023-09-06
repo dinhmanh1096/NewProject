@@ -12,19 +12,24 @@ namespace NewProject.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         { }
+        
         #region DbSet
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Workout> Workouts { get; set; }
         #endregion
+        
+        
         public class ApplicationUser : IdentityUser
         {
-            public virtual ICollection<Workout> Claims { get; set; }
+            public virtual ICollection<Workout> Workouts { get; set; }
         }
-
+        
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             SeedRoles(builder);
+           
             builder.Entity<Workout>(w =>
             {
                 w.ToTable("Workout");
@@ -42,13 +47,17 @@ namespace NewProject.Data
                 e.ToTable("Sport");
                 e.HasKey(sp => sp.SportID);
             });
+
             builder.Entity<ApplicationUser>(b =>
-            {
-                b.HasMany(e => e.Claims)
-                    .WithOne()
-                    .HasForeignKey(uc => uc.Id)
-                    .IsRequired();
-            });
+             {
+                 
+                 b.HasMany(e => e.Workouts)
+                     .WithOne()
+                     .HasForeignKey(uc => uc.UserName)
+                     .IsRequired();
+                 
+             });
+            
         }
         private static void SeedRoles(ModelBuilder model)
         {

@@ -7,6 +7,7 @@ namespace NewProject.Reponsitories
 {
     public class SportRepository : ISportRepository
     {
+        
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
@@ -71,5 +72,6 @@ namespace NewProject.Reponsitories
             return result.ToList();
 
         }
+         
     }
 }
