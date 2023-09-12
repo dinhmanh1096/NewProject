@@ -12,35 +12,20 @@ namespace NewProject.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         { }
-        
+
         #region DbSet
+        public DbSet<Role>? Roles { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Workout> Workouts { get; set; }
+
         #endregion
-        
-        
-        public class ApplicationUser : IdentityUser
-        {
-            public virtual ICollection<Workout> Workouts { get; set; }
-        }
-        
+       
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             SeedRoles(builder);
-           
-            builder.Entity<Workout>(w =>
-            {
-                w.ToTable("Workout");
-                w.HasKey(e => e.WorkoutID);
-
-                w.HasOne(e => e.sport)
-               .WithMany(e => e.Workouts)
-               .HasForeignKey(e => e.SportID)
-               .HasConstraintName("FK_Sport_Workout");    
-                               
-            });
 
             builder.Entity<Sport>(e =>
             {
@@ -48,16 +33,38 @@ namespace NewProject.Data
                 e.HasKey(sp => sp.SportID);
             });
 
-            builder.Entity<ApplicationUser>(b =>
-             {
-                 
-                 b.HasMany(e => e.Workouts)
-                     .WithOne()
-                     .HasForeignKey(uc => uc.UserName)
-                     .IsRequired();
-                 
-             });
-            
+            builder.Entity<Role>(r =>
+            {
+                r.ToTable("Role");
+                r.HasKey(rl => rl.RoleID);
+            });
+
+            builder.Entity<User>(entity =>
+            {
+                entity.ToTable("User");
+                entity.HasKey(e => e.UserID);
+                entity.HasOne(e => e.Role)
+                .WithMany(e => e.Users)
+                .HasForeignKey(e => e.RoleID)
+                .HasConstraintName("FK_role_user");
+
+            });
+
+            builder.Entity<Workout>(w =>
+            {
+                w.ToTable("Workout");
+                w.HasKey(e => e.WorkoutID);
+
+                w.HasOne(e => e.sport)
+                .WithMany(e => e.Workouts)
+                .HasForeignKey(e => e.SportID)
+                .HasConstraintName("FK_Sport_Workout");
+                w.HasOne(e => e.user)
+                .WithMany(e => e.Workouts)
+                .HasForeignKey(e => e.UserID)
+                .HasConstraintName("Fk_User_workout");
+            });
+           
         }
         private static void SeedRoles(ModelBuilder model)
         {

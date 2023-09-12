@@ -12,8 +12,8 @@ using NewProject.Data;
 namespace NewProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230822092508_dbinit")]
-    partial class dbinit
+    [Migration("20230911021528_DBInit")]
+    partial class DBInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -222,6 +222,23 @@ namespace NewProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("NewProject.Data.Role", b =>
+                {
+                    b.Property<int>("RoleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"), 1L, 1);
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RoleID");
+
+                    b.ToTable("Role", (string)null);
+                });
+
             modelBuilder.Entity("NewProject.Data.Sport", b =>
                 {
                     b.Property<int>("SportID")
@@ -241,6 +258,44 @@ namespace NewProject.Migrations
                     b.HasKey("SportID");
 
                     b.ToTable("Sport", (string)null);
+                });
+
+            modelBuilder.Entity("NewProject.Data.User", b =>
+                {
+                    b.Property<int>("UserID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FistName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserID");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("NewProject.Data.Workout", b =>
@@ -266,16 +321,18 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
                     b.Property<string>("WorkoutName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("id")
-                        .HasColumnType("int");
-
                     b.HasKey("WorkoutID");
 
                     b.HasIndex("SportID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Workout", (string)null);
                 });
@@ -331,6 +388,18 @@ namespace NewProject.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NewProject.Data.User", b =>
+                {
+                    b.HasOne("NewProject.Data.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_role_user");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("NewProject.Data.Workout", b =>
                 {
                     b.HasOne("NewProject.Data.Sport", "sport")
@@ -340,10 +409,29 @@ namespace NewProject.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Sport_Workout");
 
+                    b.HasOne("NewProject.Data.User", "user")
+                        .WithMany("Workouts")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Fk_User_workout");
+
                     b.Navigation("sport");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("NewProject.Data.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("NewProject.Data.Sport", b =>
+                {
+                    b.Navigation("Workouts");
+                });
+
+            modelBuilder.Entity("NewProject.Data.User", b =>
                 {
                     b.Navigation("Workouts");
                 });

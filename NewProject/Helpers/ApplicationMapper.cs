@@ -12,6 +12,11 @@ namespace NewProject.Helpers
             CreateMap<Sport, RequestSportModel>().ReverseMap();
             CreateMap<Workout, WorkoutModel>().ReverseMap();
             CreateMap<Workout, RequestWorkoutModel>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
+            CreateMap<User, RequestUserModel>().ReverseMap();
+            CreateMap<Role, RoleModel>().ReverseMap();
+            CreateMap<Role, RequestRoleModel>().ReverseMap();
         }
     }
+    
 }

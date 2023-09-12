@@ -4,19 +4,19 @@
 
 namespace NewProject.Migrations
 {
-    public partial class seedrole : Migration
+    public partial class SeedRole : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "7e4fa7ca-27cb-4978-af4c-e8602f0509f4", "1", "Admin", "Admin" });
+                values: new object[] { "541defbd-2029-43eb-b78b-c2699107dace", "2", "User", "User" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "aaf0a9ea-600a-42b2-9aed-e6841c5d53a8", "2", "User", "User" });
+                values: new object[] { "c75f3d97-511f-44af-b543-ba644ab1d87c", "1", "Admin", "Admin" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -24,12 +24,12 @@ namespace NewProject.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "7e4fa7ca-27cb-4978-af4c-e8602f0509f4");
+                keyValue: "541defbd-2029-43eb-b78b-c2699107dace");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "aaf0a9ea-600a-42b2-9aed-e6841c5d53a8");
+                keyValue: "c75f3d97-511f-44af-b543-ba644ab1d87c");
         }
     }
 }
