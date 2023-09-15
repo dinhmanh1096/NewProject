@@ -6,7 +6,6 @@ using NewProject.Reponsitories;
 
 namespace NewProject.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkoutController : ControllerBase
@@ -17,24 +16,24 @@ namespace NewProject.Controllers
         {
             _WorkoutRepo = repo;
         }
+
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         public async Task<IActionResult> GetAllWorkout()
-        {
-            try
-            {
-                return Ok(await _WorkoutRepo.GetAllWorkoutAsync());
-            }
-            catch
-            {
-                return BadRequest();
-            }
+        { 
+           return Ok(await _WorkoutRepo.GetAllWorkoutAsync());
+
         }
+
+        [Authorize(Roles = "Admin,User")]
         [HttpGet("{workoutID}")]
         public async Task<IActionResult> GetWorkoutByID(int workoutID)
         {
             var workout = await _WorkoutRepo.GetWorkoutAsync(workoutID);
             return workout == null ? NotFound() : Ok(workout);
         }
+
+        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> AddNewWorkout(RequestWorkoutModel model)
         {
@@ -43,6 +42,8 @@ namespace NewProject.Controllers
             return workout == null ? BadRequest() : Ok(workout);
 
         }
+
+        [Authorize(Roles = "Admin,User")]
         [HttpPut("{workoutID}")]
         public async Task<IActionResult> UpdateWorkout(int workoutID, [FromBody] WorkoutModel model)
         {
@@ -53,6 +54,8 @@ namespace NewProject.Controllers
             await _WorkoutRepo.UpdateWorkoutAsync(workoutID, model);
             return Ok();
         }
+
+        [Authorize(Roles = "Admin,User")]
         [HttpDelete("{workoutID}")]
         public async Task<IActionResult> DeleteWorkout(int workoutID)
         {

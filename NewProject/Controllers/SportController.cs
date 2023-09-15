@@ -6,7 +6,7 @@ using NewProject.Reponsitories;
 
 namespace NewProject.Controllers
 {
-    [ Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SportController : ControllerBase
@@ -17,18 +17,12 @@ namespace NewProject.Controllers
         {
             _sportRepo = repo;
         }
+
         [HttpGet]
-      
         public async Task<IActionResult> GetAllSport()
         {
-            try
-            {
-                return Ok(await _sportRepo.GetAllSportsAsync());
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            return Ok(await _sportRepo.GetAllSportsAsync());
+
         }
         [HttpGet("{sportId}")]
         public async Task<IActionResult> GetSportByID(int sportId)

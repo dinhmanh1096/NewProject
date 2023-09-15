@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NewProject.Data;
 using NewProject.Models;
+using NewProject.Models.Authentication.SignUp;
 
 namespace NewProject.Helpers
 {
@@ -16,6 +17,7 @@ namespace NewProject.Helpers
             CreateMap<User, RequestUserModel>().ReverseMap();
             CreateMap<Role, RoleModel>().ReverseMap();
             CreateMap<Role, RequestRoleModel>().ReverseMap();
+            CreateMap<User, RegisterUser>().ReverseMap();
         }
     }
     

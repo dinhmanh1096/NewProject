@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NewProject.Data;
 using NewProject.Models;
+using NewProject.Models.Authentication;
 
 namespace NewProject.Reponsitories
 {
@@ -16,11 +18,12 @@ namespace NewProject.Reponsitories
             _mapper = mapper;
         }
         public async Task<int> AddUserAsync(RequestUserModel model)
-        {
-            var newUser = _mapper.Map<User>(model);
-            _context.Users!.Add(newUser);
-            await _context.SaveChangesAsync();
-            return newUser.UserID;
+        {        
+                var newUser = _mapper.Map<User>(model);
+                _context.Users!.Add(newUser);
+                await _context.SaveChangesAsync();
+                return newUser.UserID;
+
         }
 
         public async Task DeleteUserAsync(int userID)
@@ -31,6 +34,7 @@ namespace NewProject.Reponsitories
                 _context.Users!.Remove(deleteUser);
                 await _context.SaveChangesAsync();
             }
+            
         }
 
         public async Task<List<UserModel>> GetAllUserAsync()

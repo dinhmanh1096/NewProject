@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using NewProject.Data;
-using NewProject.Models.Authentication;
 using NewProject.Models.Authentication.Login;
-using NewProject.Models.Authentication.SignUp;
-using System.Diagnostics.Eventing.Reader;
-using System.IdentityModel.Tokens.Jwt;
+using NewProject.Models.Authentication;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using NewProject.Models;
+using Microsoft.Data.SqlClient;
+using NewProject.Models.Authentication.SignUp;
+using AutoMapper;
 
 namespace NewProject.Controllers
 {
@@ -17,92 +18,92 @@ namespace NewProject.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AuthenticationController(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticationController(ApplicationDbContext context,IConfiguration configuration,IMapper mapper) 
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
-        [HttpPost]     
-        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser, string role)
+        [HttpPost("SignUp")]
+        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
         {
-            var userExit = await _userManager.FindByEmailAsync(registerUser.Email);
-            if (userExit != null)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden,
-                    new Response { Status = "Error", Message = "Email already exists!" });
-            }
-            var username = await _userManager.FindByNameAsync(registerUser.UserName);
+            var username=_context.Users.SingleOrDefault(p=>p.UserName==registerUser.UserName);
             if (username != null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden,
                     new Response { Status = "Error", Message = "User already exists!" });
             }
-            IdentityUser user = new()
+            var userEmail=_context.Users.SingleOrDefault(u=>u.Email==registerUser.Email);
+            if (userEmail != null)
             {
-                Email = registerUser.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = registerUser.UserName
-            };
-
-            if (await _roleManager.RoleExistsAsync(role))
-            {
-                var result = await _userManager.CreateAsync(user, registerUser.Password);
-                if (!result.Succeeded)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        new Response { Status = "Error", Message = "User failed to create!" });
-                }
-                await _userManager.AddToRoleAsync(user, role);
-                return StatusCode(StatusCodes.Status200OK,
-                        new Response { Status = "Success", Message = "User Created SuccessFully!" });
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    new Response { Status = "Error", Message = "Email already exists!" });
             }
-            else
+            var roleID = _context.Roles.SingleOrDefault(r => r.RoleID == registerUser.RoleID);
+            if (roleID == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                        new Response { Status = "Error", Message = "This role doesnot exist." });
+                    new Response { Status = "Error", Message = "This Role Doesn't Exist!" });
             }
 
+
+            var newUser = _mapper.Map<User>(registerUser);
+            _context.Users!.Add(newUser);
+            await _context.SaveChangesAsync();
+            return StatusCode(StatusCodes.Status200OK,
+                        new Response { Status = "Success", Message = "User Created SuccessFully!" });
         }
 
-        [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
-        {        
-         var user = await _userManager.FindByNameAsync(loginModel.UserName);
 
-            if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginModel loginModel)
+        {
+            var user=_context.Users.SingleOrDefault(u=>u.UserName == loginModel.UserName &&
+               loginModel.Password==u.Password);
+            if (user != null)
             {
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),                   
                 };
-                var userRoles = await _userManager.GetRolesAsync(user);
-                foreach (var role in userRoles)
+
+                string Constr = @"server=.;database=NewProjectDB;Integrated security=True";
+                string userRole="";
+                using (SqlConnection con=new SqlConnection(Constr))
                 {
-                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                    string sql = string.Format(
+                        @"Select a.*,b.RoleName from dbo.[User] a inner join dbo.[Role] b on a.RoleID=b.RoleID
+                            where a.UserName='{0}' and a.Password='{1}'",
+                        loginModel.UserName, loginModel.Password) ;
+                    SqlCommand cmd= new SqlCommand(sql, con);
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    con.Open();
+                    SqlDataReader rd = cmd.ExecuteReader();
+                    while(rd.Read())
+                    {
+                        userRole = rd["RoleName"].ToString();
+                    }
+                   
                 }
 
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 var jwtToken = GetToken(authClaims);
 
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     expiration = jwtToken.ValidTo
-                });              
+                });
             }
             return Unauthorized();
 
-        }
-        
-
+        }        
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigninKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -115,6 +116,5 @@ namespace NewProject.Controllers
                 );
             return token;
         }
-
     }
 }

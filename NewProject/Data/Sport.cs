@@ -7,8 +7,8 @@ namespace NewProject.Data
         
         public int SportID { get; set; }
         [Required]
-        public string? SportName { get; set;}
-        public string SportDescription { get; set;} = string.Empty;
+        public string SportName { get; set;}
+        public string? SportDescription { get; set;} = string.Empty;
         public ICollection<Workout> Workouts { get; set; }
     }
 }

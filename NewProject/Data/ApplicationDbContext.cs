@@ -8,13 +8,13 @@ using System.Security.AccessControl;
 
 namespace NewProject.Data
 {
-    public class ApplicationDbContext:IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext:DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         { }
 
         #region DbSet
-        public DbSet<Role>? Roles { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Workout> Workouts { get; set; }
@@ -68,10 +68,10 @@ namespace NewProject.Data
         }
         private static void SeedRoles(ModelBuilder model)
         {
-            model.Entity<IdentityRole>().HasData
+            model.Entity<Role>().HasData
             (
-                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin" },
-                new IdentityRole() { Name="User",ConcurrencyStamp="2",NormalizedName="User"}
+                new Role() {RoleID=1, RoleName = "Admin"},
+                new Role() {RoleID=2, RoleName = "User"}
             );
             
         }
